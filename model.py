@@ -140,6 +140,7 @@ class Student(db.Model):
   __tablename__ = "students"
 
   student_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+  student_frodo_id = db.Column(db.Integer)
   full_name = db.Column(db.String(512), nullable=False)
   current_rating = db.Column(db.Integer)
 
