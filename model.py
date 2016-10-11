@@ -3,6 +3,7 @@
 Skeleton from Hackbright Ratings exercise."""
 
 from flask_sqlalchemy import SQLAlchemy
+from frodo_scraper import get_levels, get_students
 
 # This is the connection to the PostgreSQL database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
@@ -20,7 +21,7 @@ class Cohort(db.Model):
 
     cohort_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     frodo_cohort_id = db.Column(db.String(8), nullable=False) # cohort ID from frodo; example: f16g
-    cohort_name = db.Column(db.string(64), nullable=False) # cohort name; example "Fall 16 Grace"
+    cohort_name = db.Column(db.String(64), nullable=False) # cohort name; example "Fall 16 Grace"
 
     def __repr__(self):
       """Provide helpful representation when printed."""
@@ -33,13 +34,21 @@ class Cohort(db.Model):
     def add_students(self):
       """add students from frodo web site for this cohort"""
 
-      # get data from frodo
+      # students will be a dictionary, with keys as frodo_ids, values as dicts
+      students = get_students(self.frodo_cohort_id)
 
-      # add to db
+      for frodo_id, data in students.items():
+        jessica = Student(student_frodo_id=frodo_id,
+                          full_name=data['fullname'],
+                          current_rating=data['level'])
+        db.session.add(jessica)
+
+      db.session.commit()
 
     def update_ratings(self):
       """use info from frodo to update ratings for students"""
 
+      ratings = get_levels(self.frodo_cohort_id)
 
     def check_pair(self, student1_id, student2_id):
       """return pairing period for which this pair exists, None if the pair doesn't exist"""
@@ -82,10 +91,10 @@ class PairingPeriod(db.Model):
   __tablename__ = "pairingperiods"
 
   period_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-  cohort_id = db.Column(db.ForeignKey("timeslot.timeslot_id"))
+  cohort_id = db.Column(db.ForeignKey("cohorts.cohort_id"))
   period_name = db.Column(db.String(256), nullable=False)
-  period_start = db.Column(db.ForeignKey("timeslot.timeslot_id"))
-  period_end = db.Column(db.ForeignKey("timeslot.timeslot_id"))
+  period_start = db.Column(db.ForeignKey("timeslots.timeslot_id"))
+  period_end = db.Column(db.ForeignKey("timeslots.timeslot_id"))
 
   cohort = db.relationship("Cohort",
                            backref=db.backref("pairing_periods")) 
@@ -118,10 +127,10 @@ class Pairing(db.Model):
   pairing_period = db.Column(db.ForeignKey("pairingperiods.period_id"))
 
   # for consistency, student1_id < student2_id
-  student1_id = db.Column(db.ForeignKey("student.student_id"))
-  student2_id = db.Column(db.ForeignKey("student.student_id"))
+  student1_id = db.Column(db.ForeignKey("students.student_id"))
+  student2_id = db.Column(db.ForeignKey("students.student_id"))
 
-  period = db.relationship("Period",
+  period = db.relationship("PairingPeriod",
                            backref=db.backref("pairings"))
 
 
@@ -143,6 +152,7 @@ class Student(db.Model):
   student_frodo_id = db.Column(db.Integer)
   full_name = db.Column(db.String(512), nullable=False)
   current_rating = db.Column(db.Integer)
+  cohort_id = db.Column(db.Integer, db.ForeignKey("cohorts.cohort_id"))
 
   cohort = db.relationship("Cohort", 
                            backref=db.backref("students", order_by=full_name))
@@ -179,4 +189,8 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
+    # db.drop_all()
+    # db.create_all()
+    # f16g = Cohort(frodo_cohort_id='f16g', cohort_name='Fall 2016 Grace')
+    # f16g.add_students()
     print "Connected to DB."
