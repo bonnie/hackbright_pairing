@@ -37,9 +37,8 @@ def list_cohorts():
 def get_cohort_summary(frodo_cohort_id):
     """Get a summary for a particular cohort"""
 
-    cohort_data = Cohort.query.filter_by(frodo_cohort_id=frodo_cohort_id)
+    cohort_data = Cohort.query.filter_by(frodo_cohort_id=frodo_cohort_id).one()
     return render_template("cohort_summary.html", cohort_data=cohort_data)
-
 
 
 if __name__ == "__main__":
@@ -54,4 +53,4 @@ if __name__ == "__main__":
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
-    app.run()
+    app.run(port=5005)

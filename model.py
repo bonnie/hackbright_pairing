@@ -40,7 +40,8 @@ class Cohort(db.Model):
       for frodo_id, data in students.items():
         jessica = Student(student_frodo_id=frodo_id,
                           full_name=data['fullname'],
-                          current_rating=data['level'])
+                          current_rating=data['level'],
+                          cohort_id=self.cohort_id)
         db.session.add(jessica)
 
       db.session.commit()
@@ -155,15 +156,15 @@ class Student(db.Model):
   cohort_id = db.Column(db.Integer, db.ForeignKey("cohorts.cohort_id"))
 
   cohort = db.relationship("Cohort", 
-                           backref=db.backref("students", order_by=full_name))
+                           backref=db.backref("students", order_by=current_rating))
 
   def __repr__(self):
     """Provide helpful representation when printed."""
 
     repr_string = "<Student student_id={} full_name={}, current_rating={}>"
-    return repr_string.format(self.cohort_id, 
-                              self.frodo_cohort_id,
-                              self.cohort_name)
+    return repr_string.format(self.student_id, 
+                              self.full_name,
+                              self.current_rating)
 
   def get_pairings(self):
     """return a dict of pairings for this student"""
@@ -192,5 +193,7 @@ if __name__ == "__main__":
     # db.drop_all()
     # db.create_all()
     # f16g = Cohort(frodo_cohort_id='f16g', cohort_name='Fall 2016 Grace')
+    # db.session.add(f16g)
+    # db.session.commit()
     # f16g.add_students()
     print "Connected to DB."
