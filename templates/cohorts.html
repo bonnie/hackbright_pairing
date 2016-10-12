@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Choose a Cohort
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12">     
+        Choose a cohort! 
+      
+        <select id="cohort-select">
+          <option value=""></option>
+          {% for cohort in cohorts %}
+            <option value="{{ cohort.cohort_id }}">{{ cohort.cohort_name }}</option>
+          {% endfor %}
+        </select>
+
+    </div>
+  </div>
+{% endblock %}

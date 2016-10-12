@@ -20,22 +20,22 @@ class Cohort(db.Model):
     __tablename__ = "cohorts"
 
     cohort_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    frodo_cohort_id = db.Column(db.String(8), nullable=False) # cohort ID from frodo; example: f16g
+    cohort_frodo_id = db.Column(db.String(8), nullable=False) # cohort ID from frodo; example: f16g
     cohort_name = db.Column(db.String(64), nullable=False) # cohort name; example "Fall 16 Grace"
 
     def __repr__(self):
       """Provide helpful representation when printed."""
 
-      repr_string = "<Cohort cohort_id={} frodo_cohort_id={}, cohort_name={}>"
+      repr_string = "<Cohort cohort_id={} cohort_frodo_id={}, cohort_name={}>"
       return repr_string.format(self.cohort_id, 
-                                self.frodo_cohort_id,
+                                self.cohort_frodo_id,
                                 self.cohort_name)
 
     def add_students(self):
       """add students from frodo web site for this cohort"""
 
       # students will be a dictionary, with keys as frodo_ids, values as dicts
-      students = get_students(self.frodo_cohort_id)
+      students = get_students(self.cohort_frodo_id)
 
       for frodo_id, data in students.items():
         jessica = Student(student_frodo_id=frodo_id,
@@ -49,7 +49,7 @@ class Cohort(db.Model):
     def update_ratings(self):
       """use info from frodo to update ratings for students"""
 
-      ratings = get_levels(self.frodo_cohort_id)
+      ratings = get_levels(self.cohort_frodo_id)
 
     def check_pair(self, student1_id, student2_id):
       """return pairing period for which this pair exists, None if the pair doesn't exist"""
@@ -190,10 +190,14 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
+
+    ############## populate cohort anew ###################
     # db.drop_all()
     # db.create_all()
-    # f16g = Cohort(frodo_cohort_id='f16g', cohort_name='Fall 2016 Grace')
+    # f16g = Cohort(cohort_frodo_id='f16g', cohort_name='Fall 2016 Grace')
     # db.session.add(f16g)
     # db.session.commit()
     # f16g.add_students()
+    ###############################################
+
     print "Connected to DB."

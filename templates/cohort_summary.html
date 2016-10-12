@@ -10,13 +10,27 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-xs-4 col-xs-offset-4">     
-      <table id="cohort-summary-table" class="table table-hover table-condensed">
+    <div id="cohort-summary-table" class="col-xs-3">    
+      <h3>Students</h3> 
+      <table class="table table-hover table-condensed">
         <tr><th>Name</th><th>Level</th></tr>
         {% for student in cohort_data.students %}
           <tr>
             <td>{{ student.full_name }}</td>
             <td>{{ student.current_rating }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div id="pairing-period-table" class="col-xs-4">
+      <table class="table table-hover table-condensed">
+        <h3>Pairing Periods</h3>
+        <tr><th>Name</th><th>Start</th><th>End</th></tr>
+        {% for period in cohort_data.periods %}
+          <tr>
+            <td>{{ period.period_name }}</td>
+            <td>{{ period.period_start.timeslot_date }} {{ period.period_start.timeslot_period }}</td>
+            <td>{{ period.period_end.timeslot_date }} {{ period.period_end.timeslot_period }}</td>
           </tr>
         {% endfor %}
       </table>

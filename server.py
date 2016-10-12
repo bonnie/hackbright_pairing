@@ -23,8 +23,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    return render_template("homepage.html")
-
+    return redirect('/cohorts')
 
 @app.route('/cohorts')
 def list_cohorts():
@@ -33,11 +32,14 @@ def list_cohorts():
     cohorts = Cohort.query.all()
     return render_template("cohorts.html", cohorts=cohorts)
 
-@app.route('/cohort/<frodo_cohort_id>')
-def get_cohort_summary(frodo_cohort_id):
+@app.route('/cohort/<cohort_id>')
+def get_cohort_summary(cohort_id):
     """Get a summary for a particular cohort"""
 
-    cohort_data = Cohort.query.filter_by(frodo_cohort_id=frodo_cohort_id).one()
+    cohort_data = Cohort.query.get(cohort_id)
+    session['cohort_name'] = cohort_data.cohort_name
+    session['cohort_id'] = cohort_id
+
     return render_template("cohort_summary.html", cohort_data=cohort_data)
 
 
