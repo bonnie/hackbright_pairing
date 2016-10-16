@@ -76,7 +76,7 @@ class PeriodTimeSlot(db.Model):
 
   timeslot_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
   timeslot_date = db.Column(db.DateTime)
-  timeslot_period = db.Column(db.String(16)) # this will be Morning or Evening
+  timeslot_period = db.Column(db.String(16)) # this will be 'am' or 'pm' (for morining / afternoon)
 
   def __repr__(self):
       """Provide helpful representation when printed."""

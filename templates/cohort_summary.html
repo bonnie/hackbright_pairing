@@ -26,13 +26,13 @@
       <table class="table table-hover table-condensed">
         <h3>Pairing Periods</h3>
         <tr><th>Name</th><th>Start</th><th>End</th></tr>
-        {% for period in cohort_data.periods %}
+{#        {% for period in cohort_data.periods %}
           <tr>
             <td>{{ period.period_name }}</td>
             <td>{{ period.period_start.timeslot_date }} {{ period.period_start.timeslot_period }}</td>
             <td>{{ period.period_end.timeslot_date }} {{ period.period_end.timeslot_period }}</td>
           </tr>
-        {% endfor %}
+        {% endfor %} #}
       </table>
     </div>
   </div>
