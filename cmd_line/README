@@ -1,0 +1,15 @@
+To run: 
+
+1. get a list of levels from the frodo sql explorer: 
+
+http://fellowship.hackbrightacademy.com/explorer/34/ (fill in cohort id)
+
+2. Export the csv file from the sql explorer
+
+3. Save it to this directory and call it levels.csv
+
+4. Run the script (it's randomized) until you get a result you like. The 
+results will be saved in YYYYMMDD_pastpairs.csv so that it can be used next
+go-around to avoid repeating partners. 
+
+5. Profit. 
