@@ -2,11 +2,13 @@ To run:
 
 1. get a list of levels from the frodo sql explorer: 
 
-http://fellowship.hackbrightacademy.com/explorer/34/ (fill in cohort id)
+http://fellowship.hackbrightacademy.com/explorer/34/?params=cohort_id%3A<<cohort id>> 
+(replace <<cohort id>> with the actual cohort id; e.g. f17g)
 
 2. Export the csv file from the sql explorer
 
-3. Save it to this directory and call it levels.csv
+3. Save it to this directory and call it levels.csv, removing the "name,level" 
+first line
 
 4. Run the script (it's randomized) until you get a result you like. The 
 results will be saved in YYYYMMDD_pastpairs.csv so that it can be used next

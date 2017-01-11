@@ -125,11 +125,15 @@ def get_latest_pairsfile():
     # if there's a file from today from previous times running this script (and
     # not liking the results), don't include it
     todayfile_name = './' + TODAY_STRING + FILENAME_SUFFIX
-    todayfile_index = files.index(todayfile_name)
 
-    if todayfile_index:
+    try:
+        # this will throw exception if the file doesn't exist in the listing
+        todayfile_index = files.index(todayfile_name)
+
         print "ignoring today's file: ", todayfile_name
         del files[todayfile_index]
+    except:
+        pass
 
     latest_file = sorted(files)[-1]
     print 'USING PAST PAIRS FILE', latest_file
