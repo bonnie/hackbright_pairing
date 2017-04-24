@@ -15,3 +15,22 @@ results will be saved in YYYYMMDD_pastpairs.csv so that it can be used next
 go-around to avoid repeating partners. 
 
 5. Profit. 
+
+
+Query, for reference: 
+
+SELECT CONCAT(first_name, ' ', last_name) AS name, sis_studentlevel.level
+FROM sis_student
+JOIN sis_studentlevel ON sis_student.id = sis_studentlevel.student_id
+JOIN sis_cohorthouse ON sis_student.house_id = sis_cohorthouse.id
+WHERE sis_student.cohort_id='$$cohort_id$$'
+  AND sis_studentlevel.created IN
+    (SELECT MAX(sis_studentlevel.created)
+     FROM sis_studentlevel
+     JOIN sis_student ON sis_student.id = sis_studentlevel.student_id
+     GROUP BY sis_student.id)
+GROUP BY sis_cohorthouse.title,
+         sis_student.id,
+         sis_studentlevel.level,
+         sis_studentlevel.created
+ORDER BY sis_cohorthouse.title, sis_student.last_name;
