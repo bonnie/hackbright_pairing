@@ -22,6 +22,9 @@ def get_levels():
     # get the levels
     level_file = open('levels.csv')
     for line in level_file:
+        if line.startswith('name,level'):
+            continue
+
         name, level = line.split(',')
         level = int(level)
         levels[level].append(name)
@@ -133,7 +136,7 @@ def get_latest_pairsfile():
         print "ignoring today's file: ", todayfile_name
         del files[todayfile_index]
     except:
-        pass
+        print "No file found for today..."
 
     latest_file = sorted(files)[-1]
     print 'USING PAST PAIRS FILE', latest_file
