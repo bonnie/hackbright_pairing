@@ -13,6 +13,7 @@ def get_levels():
     """create and return a dict of student levels"""
     
     levels = {}
+    students = set()
 
     # initialize levels dict
     for i in range(1, 11):
@@ -24,11 +25,12 @@ def get_levels():
         name, level = line.split(',')
         level = int(level)
         levels[level].append(name)
+        students.add(name)
 
     level_file.close()
-    return levels
+    return levels, students
 
-def get_past_pairs(levels):
+def get_past_pairs(students):
     """create dict of past pairs from latest past pairs file"""
 
     past_pairs = {}
@@ -36,9 +38,7 @@ def get_past_pairs(levels):
     previous_pairs_filename = get_latest_pairsfile()
     if not previous_pairs_filename:
         # there are no previous pairs
-        for student in levels:
-            past_pairs[student] = []
-        return past_pairs 
+        return { student: [] for student in students } 
 
     pairs_file = open(previous_pairs_filename)
     for line in pairs_file:
@@ -93,7 +93,7 @@ def find_pair(student, level, past_pairs, levels, solo_pair):
     for pairing_level in possible_levels:
         print "trying level", pairing_level
 
-        # get a random order of past pairs
+        # get a random order of possible pairs
         pairs_list = levels.get(pairing_level, [])
         random.shuffle(pairs_list)
 
@@ -177,22 +177,29 @@ def update_pairsfile(past_pairs):
         outfile.write(line + '\n')
 
     # make dict of student levels
-    levels = get_levels()
+    levels, students = get_levels()
 
 
 if __name__ == "__main__":
 
     # get the levels
-    levels = get_levels()
+    levels, students = get_levels()
 
     # get the previous pairs
-    past_pairs = get_past_pairs(levels)
+    past_pairs = get_past_pairs(students)
 
-    # pair up the students
-    pairs = create_pairs(levels, past_pairs)
+    # keep iterating until the user says OK
+    while True:
 
-    # give some output and record new pairings
-    past_pairs = print_pairs(past_pairs, pairs)
+        # pair up the students
+        pairs = create_pairs(levels, past_pairs)
 
-    # create new file for the past pairs
-    update_pairsfile(past_pairs)
+        # give some output and record new pairings
+        past_pairs = print_pairs(past_pairs, pairs)
+
+        answer = raw_input("Do you accept these pairs? (y or n): ")
+
+        if answer == 'y':
+            # create new file for the past pairs
+            update_pairsfile(past_pairs)
+            break
